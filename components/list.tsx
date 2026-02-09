@@ -3,10 +3,22 @@
 import { Heart, Circle } from "lucide-react";
 import { useGameContext } from "./game-context";
 import { useRef, useEffect, useState } from "react";
+import ItemDetail, { ItemDetailData } from "./item-detail";
 
-interface ListItem {
+export interface ListChild {
+  text: string;
+  symbol?: "dot" | "star";
+  weight?: number;
+  domain?: string;
+  role?: string;
+  dateRange?: string;
+  description?: string;
+  images?: string[];
+}
+
+export interface ListItem {
   parent: string;
-  children?: Array<string | { text: string; symbol?: "dot" | "star"; weight?: number; domain?: string }>;
+  children?: Array<string | ListChild>;
 }
 
 interface ListProps {
@@ -18,12 +30,13 @@ export default function List({ items, onInitialPositionsReady }: ListProps) {
   const { isActive, wordPositions } = useGameContext();
   const itemRefs = useRef<Map<string, HTMLElement>>(new Map());
   const [positionsCaptured, setPositionsCaptured] = useState(false);
-  
+  const [selectedItem, setSelectedItem] = useState<ItemDetailData | null>(null);
+
   // Extract all words with their IDs - consistent ID generation
   const getAllWords = () => {
-    const allWords: Array<{ id: string; text: string; child: string | { text: string; symbol?: "dot" | "star"; weight?: number; domain?: string } }> = [];
+    const allWords: Array<{ id: string; text: string; child: string | ListChild }> = [];
     let idCounter = 0;
-    
+
     items.forEach((item) => {
       if (item.children) {
         item.children.forEach((child) => {
@@ -36,7 +49,7 @@ export default function List({ items, onInitialPositionsReady }: ListProps) {
         });
       }
     });
-    
+
     return allWords;
   };
 
@@ -63,12 +76,36 @@ export default function List({ items, onInitialPositionsReady }: ListProps) {
         setPositionsCaptured(true);
       }
     }
-    
+
     // Reset when game ends
     if (!isActive) {
       setPositionsCaptured(false);
     }
   }, [isActive, wordPositions.size, onInitialPositionsReady, allWords]);
+
+  const handleItemClick = (child: string | ListChild) => {
+    if (typeof child === "string") {
+      // Simple string items don't have detail views
+      return;
+    }
+
+    // Only open detail if there's meaningful content
+    if (child.description || child.images?.length) {
+      setSelectedItem({
+        text: child.text,
+        role: child.role,
+        dateRange: child.dateRange,
+        description: child.description,
+        domain: child.domain,
+        images: child.images,
+      });
+    }
+  };
+
+  const hasDetailContent = (child: string | ListChild): boolean => {
+    if (typeof child === "string") return false;
+    return !!(child.description || child.images?.length);
+  };
 
   if (isActive && positionsCaptured && wordPositions.size > 0) {
     // Render flying words
@@ -77,13 +114,13 @@ export default function List({ items, onInitialPositionsReady }: ListProps) {
         {allWords.map((wordData) => {
           const position = wordPositions.get(wordData.id);
           if (!position || position.hit) return null;
-          
+
           const child = wordData.child;
           const childText = typeof child === "string" ? child : child.text;
           const symbol = typeof child === "string" ? undefined : child.symbol;
           const weight = typeof child === "string" ? undefined : child.weight;
           const domain = typeof child === "string" ? undefined : child.domain;
-          
+
           return (
             <div
               key={wordData.id}
@@ -96,7 +133,7 @@ export default function List({ items, onInitialPositionsReady }: ListProps) {
               }}
             >
               {domain ? (
-                <a 
+                <a
                   href={`https://${domain}`}
                   target="_blank"
                   rel="noopener noreferrer"
@@ -122,66 +159,79 @@ export default function List({ items, onInitialPositionsReady }: ListProps) {
 
   // Normal list rendering
   return (
-    <ul className="text-black dark:text-white list-none">
-      {items.map((item, index) => (
-        <li key={index} className={item.parent === "Building" ? "mb-6" : "mb-2"}>
-          <div className="font-normal">{item.parent}</div>
-          {item.children && item.children.length > 0 && (
-            <ul className="list-none mt-1 ml-6">
-              {item.children.map((child, childIndex) => {
-                const childText = typeof child === "string" ? child : child.text;
-                const symbol = typeof child === "string" ? undefined : child.symbol;
-                const weight = typeof child === "string" ? undefined : child.weight;
-                const domain = typeof child === "string" ? undefined : child.domain;
-                
-                // Find matching word ID
-                const wordData = allWords.find(w => w.text === childText);
-                const wordId = wordData?.id || `word-${childIndex}`;
-                
-                // Store mapping for this render
-                if (!wordIdMap.current.has(childIndex)) {
-                  wordIdMap.current.set(childIndex, wordId);
-                }
-                
-                return (
-                  <li 
-                    key={childIndex} 
-                    className="mb-1 flex items-center"
-                    ref={(el) => {
-                      if (el && wordId) {
-                        itemRefs.current.set(wordId, el);
-                      } else if (!el && wordId) {
-                        itemRefs.current.delete(wordId);
-                      }
-                    }}
-                  >
-                    {domain ? (
-                      <a 
-                        href={`https://${domain}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="hover:opacity-70"
-                        style={{ fontWeight: weight }}
-                      >
-                        {childText}
-                      </a>
-                    ) : (
-                      <span style={{ fontWeight: weight }}>{childText}</span>
-                    )}
-                    {symbol === "dot" && (
-                      <Circle className="ml-2 inline-block" size={7} fill="currentColor" />
-                    )}
-                    {symbol === "star" && (
-                      <Heart className="ml-2 inline-block" size={8} fill="currentColor" />
-                    )}
-                  </li>
-                );
-              })}
-            </ul>
-          )}
-        </li>
-      ))}
-    </ul>
+    <>
+      <ul className="text-black dark:text-white list-none">
+        {items.map((item, index) => (
+          <li key={index} className={item.parent === "Work" || item.parent === "Projects" ? "mb-6" : "mb-2"}>
+            <div className="font-normal">{item.parent}</div>
+            {item.children && item.children.length > 0 && (
+              <ul className="list-none mt-1 ml-6">
+                {item.children.map((child, childIndex) => {
+                  const childText = typeof child === "string" ? child : child.text;
+                  const symbol = typeof child === "string" ? undefined : child.symbol;
+                  const weight = typeof child === "string" ? undefined : child.weight;
+                  const domain = typeof child === "string" ? undefined : child.domain;
+                  const hasDetail = hasDetailContent(child);
+
+                  // Find matching word ID
+                  const wordData = allWords.find(w => w.text === childText);
+                  const wordId = wordData?.id || `word-${childIndex}`;
+
+                  // Store mapping for this render
+                  if (!wordIdMap.current.has(childIndex)) {
+                    wordIdMap.current.set(childIndex, wordId);
+                  }
+
+                  return (
+                    <li
+                      key={childIndex}
+                      className="mb-1 flex items-center"
+                      ref={(el) => {
+                        if (el && wordId) {
+                          itemRefs.current.set(wordId, el);
+                        } else if (!el && wordId) {
+                          itemRefs.current.delete(wordId);
+                        }
+                      }}
+                    >
+                      {domain && !hasDetail ? (
+                        <a
+                          href={`https://${domain}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="hover:opacity-70"
+                          style={{ fontWeight: weight }}
+                        >
+                          {childText}
+                        </a>
+                      ) : hasDetail ? (
+                        <button
+                          onClick={() => handleItemClick(child)}
+                          className="hover:opacity-70 text-left"
+                          style={{ fontWeight: weight }}
+                        >
+                          {childText}
+                        </button>
+                      ) : (
+                        <span style={{ fontWeight: weight }}>{childText}</span>
+                      )}
+                      {symbol === "dot" && (
+                        <Circle className="ml-2 inline-block" size={7} fill="currentColor" />
+                      )}
+                      {symbol === "star" && (
+                        <Heart className="ml-2 inline-block" size={8} fill="currentColor" />
+                      )}
+                    </li>
+                  );
+                })}
+              </ul>
+            )}
+          </li>
+        ))}
+      </ul>
+
+      {/* Detail popup */}
+      <ItemDetail item={selectedItem} onClose={() => setSelectedItem(null)} />
+    </>
   );
 }
-

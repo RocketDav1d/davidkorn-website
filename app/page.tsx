@@ -52,13 +52,64 @@ export default function Home() {
   };
   const listItems = [
     {
-      parent: "Building",
+      parent: "Work",
       children: [
-        { text: "Registercheck", symbol: "dot" as const, weight: 500, domain: "registercheck.de" },
-        { text: "AttentionFactory", domain: "xplosiv.ai" },
-        { text: "Bowie.video", domain: "bowie.video" },
-        "Google",
-        { text: "Trustyourvc", domain: "trustyourvc.com" },
+        {
+          text: "Registercheck",
+          symbol: "dot" as const,
+          weight: 500,
+          domain: "registercheck.de",
+          role: "Co-Founder / CEO",
+          dateRange: "Nov 2024 - Present",
+          description: "Co-founded and built Registercheck, a platform providing continuously updated ownership, corporate, and financial data on German companies.",
+        },
+        {
+          text: "Trustyourvc",
+          domain: "trustyourvc.com",
+          role: "Co-Founder CTO",
+          dateRange: "Jan 2024 - Present",
+          description: "Co-founded and built Trustyourvc, a platform where European VCs and angel investors are rated by founders to increase transparency in fundraising. Responsible for technical architecture and product development.",
+        },
+        {
+          text: "bunch.capital",
+          domain: "bunch.capital",
+          role: "Process Engineering",
+          dateRange: "Dec 2022 - Aug 2023",
+          description: "Built internal tools and automated core operational workflows to improve scalability across fund and venture operations, replacing manual processes with repeatable systems.",
+        },
+        {
+          text: "Google",
+          role: "Client Project / Technical Development",
+          dateRange: "Mar 2023 - May 2023",
+          description: "Built a platform for Google's Governance & Public Policy team to analyze sentiment of key DACH-region policymakers on technology and regulation. Designed data pipelines and an interactive sentiment matrix used to segment and target policymakers; project size ≈€80k.",
+        },
+        {
+          text: "lemon.markets",
+          domain: "lemon.markets",
+          role: "GTM / Growth",
+          dateRange: "Jun 2022 - Sep 2022",
+          description: "Worked on GTM for their brokerage API, supporting developer acquisition through example trading systems and help validate early distribution channels.",
+        },
+      ],
+    },
+    {
+      parent: "Projects",
+      children: [
+        {
+          text: "Aurea Berlin",
+          domain: "joinaurea.com",
+          description: "Co-founded Aurea, a Berlin-based hacker house built to create a focused, high-trust environment for builders and independent thinkers. We're a sister house of SF based \"The Residency\" and consist of two apartments designed around shared values rather than credentials. We select residents by agency > everything else.",
+        },
+        {
+          text: "warmebetten.berlin",
+          domain: "warmebetten.berlin",
+          description: "A coordination platform built with local Berlin homeless shelters that shows real-time shelter capacity and helps citizens and emergency services bring homeless people to available shelters, built during Berlin's coldest winter in ~16 years when capacity was especially constrained.",
+        },
+        {
+          text: "Xplosiv.ai",
+          domain: "xplosiv.ai",
+          description: "A platform that provides pre-warmed U.S.-based TikTok accounts in specific niches. Accounts are warmed up over seven days and then handed over so users can post directly from the platform to reach the U.S. market from day one.",
+        },
       ],
     },
     {
@@ -81,48 +132,6 @@ export default function Home() {
         "W. Somerset Maugham",
       ],
     },
-    {
-      parent: "Listening",
-      children: [
-        { text: "2hollis", symbol: "star" as const },
-        "4evr",
-        "Aphex Twin",
-        { text: "Brian Eno", symbol: "star" as const },
-        "Cro",
-        "Future",
-        "Hammock",
-        "Kanye West",
-        "Moby",
-        "Richard Wagner",
-        "Robert Miles",
-        "Snap!",
-        { text: "Snow Strippers", symbol: "star" as const },
-        "Souly",
-        "Ti:esto",
-      ],
-    },
-    {
-      parent: "Watching",
-      children: [
-        "Brothers",
-        "Fight Club",
-        { text: "Interstellar", symbol: "star" as const },
-        "Kill Bill",
-        "Prisoners",
-        "Seven",
-        { text: "Severance", symbol: "dot" as const },
-        "Silence of the Lambs",
-        "Silicon Valley",
-        "Silie",
-        { text: "Succession", symbol: "star" as const },
-        "The Social Network",
-        "The Zodiac Killer",
-        { text: "True Detective Season 1", symbol: "star" as const },
-      ],
-    },
-    { parent: "Writing" },
-    { parent: "Using" },
-    { parent: "Connecting" },
   ];
 
   return (
