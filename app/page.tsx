@@ -4,7 +4,15 @@ import List from "@/components/list";
 import EasterEggGame from "@/components/easter-egg-game";
 import { GameProvider } from "@/components/game-context";
 import Scoreboard, { saveScore } from "@/components/scoreboard";
+import Gallery from "@/components/gallery";
 import { useState, useRef } from "react";
+
+// Gallery images - add your photos to public/gallery/ and list them here
+const galleryImages: string[] = [
+  // "/gallery/photo1.jpg",
+  // "/gallery/photo2.jpg",
+  // "/gallery/photo3.jpg",
+];
 
 export default function Home() {
   const [isGameActive, setIsGameActive] = useState(false);
@@ -168,20 +176,20 @@ export default function Home() {
                 me@davidkorn.de
               </a>
               <div className="flex gap-4">
-                <a 
+                <a
                   href="https://x.com/dav1dk0rn"
                   className="text-black dark:text-white"
-                  style={{ 
+                  style={{
                     fontFamily: 'var(--font-braun-linear)',
                     fontWeight: 400
                   }}
                 >
                   Twitter
                 </a>
-                <a 
+                <a
                   href="https://www.linkedin.com/in/korn-david/"
                   className="text-black dark:text-white"
-                  style={{ 
+                  style={{
                     fontFamily: 'var(--font-braun-linear)',
                     fontWeight: 400
                   }}
@@ -190,6 +198,12 @@ export default function Home() {
                 </a>
               </div>
             </div>
+            {/* Photo Gallery */}
+            {galleryImages.length > 0 && (
+              <div className="mt-8 w-full max-w-[300px]">
+                <Gallery images={galleryImages} rotationInterval={3000} />
+              </div>
+            )}
           </div>
         </div>
 
